@@ -1,7 +1,7 @@
-﻿using ToDoApp.DataAccess;
+﻿using System.Globalization;
+using ToDoApp.DataAccess;
 using ToDoApp.DataAccess.Models;
-using System.Collections.Generic;
-using System.Globalization;
+using ToDoApp.Presentation;
 
 namespace MyToDoApp.Presentation
 {
@@ -25,12 +25,20 @@ namespace MyToDoApp.Presentation
         {
             Console.Clear();
             MenuStringTemplate(" Menu ");
-            Console.WriteLine("\n List All - l");
-            Console.WriteLine("\n Create - c");
-            MenuDivider();
-            Console.WriteLine("Please select an option from above or press [x] to exit");
-            MenuDivider();
-            MainMenuOptions();
+            //Console.WriteLine("\n List All - l");
+            //Console.WriteLine("\n Create - c");
+            //MenuDivider();
+            //Console.WriteLine("Please select an option from above or press [x] to exit");
+            //MenuDivider();
+            //MainMenuOptions();
+            var menuItems = new List<ConsoleMenuItem>
+            {
+                new ConsoleMenuItem("List all", ListAll),
+                new ConsoleMenuItem("Create", Create),
+                new ConsoleMenuItem("Exit", Exit, "X")
+            };
+            var menu = new ConsoleMenu(menuItems);
+            menu.Display();
         }
 
         private void MainMenuOptions()
@@ -98,55 +106,11 @@ namespace MyToDoApp.Presentation
             DisplayMainMenu();
         }
 
-        private string GetNonEmptyString()
-        {
-            string itemDescription = Console.ReadLine();
-            Console.WriteLine("Item Description :" + itemDescription);
-            while (string.IsNullOrEmpty(itemDescription))
-            {
-                Console.WriteLine("Input was invalid - please add a description");
-                itemDescription = Console.ReadLine();
-            }
-            return itemDescription;
-        }
-
-        public DateTime? GetDateTimeFromInput()
-        {
-            Console.WriteLine("Please enter a valid due date (dd/mm/yyyy) - or press enter to skip");
-            var input = Console.ReadLine();
-            if (string.IsNullOrEmpty(input))
-            {
-                return null;
-            }
-            var isValidDate = false;
-
-            while (!isValidDate)
-            {
-                isValidDate = DateTime.TryParse(input, out DateTime date);
-                if (isValidDate)
-                {
-                    return date;
-                }
-                else
-                {
-                    Console.WriteLine("Please enter a valid date or press enter to skip");
-                    input = Console.ReadLine();
-                    if (string.IsNullOrEmpty(input))
-                    {
-                        break;
-                    }
-                }
-            }
-            return null;
-        }
-
         public void ListAll()
         {
             Console.Clear();
             MenuStringTemplate(" List All ");
             Console.WriteLine("| ID | Description | Complete By | Completed |");
-
-            //var x = new DateTime().ToString("dd/MM/yyyy");
 
             foreach (var toDoItem in _todoRepository.GetAll())
             {
@@ -173,7 +137,7 @@ namespace MyToDoApp.Presentation
             Console.WriteLine("Please enter the id of the item you wish to view:");
 
             var toDoItem = GetById();
-            Console.WriteLine($"To do item selected {toDoItem.Description}");
+            Console.WriteLine($"To do item selected: {toDoItem.Description}");
             Console.WriteLine("Edit Item - e");
             Console.WriteLine("Delete Item - d");
             Console.WriteLine("Main Menu - m");
@@ -193,20 +157,6 @@ namespace MyToDoApp.Presentation
                     return toDoItem;
 
                 Console.WriteLine($"Could not find any to do item with id {id}");
-
-                //isValidId = Int32.TryParse(id, out int ID);
-                //if (isValidId)
-                //{
-
-                //    Console.WriteLine($"You have selected:" + " " + ID);
-                //    var validToDoItem = _todoRepository.GetById(ID).Description;
-
-                //    Console.WriteLine(validToDoItem);
-
-                //}
-                //else
-                //    Console.WriteLine("Please enter a valid id");
-                //id = Console.ReadLine();
             }
 
             return null;
@@ -221,31 +171,6 @@ namespace MyToDoApp.Presentation
 
             DisplayMainMenu();
         }
-
-
-        //public void Delete()
-        //{
-        //}
-
-        //GetToDoItemById
-        // non negative greater than 0 
-        //get a valid non 0 number from the user 
-        //call the repository service using this id 
-        //return item, if not keep loopin until conditons are met
-        //print item 
-        //print delete/edit menu 
-
-        //Delete 
-        //get by id 
-        //remove from dictionary 
-
-
-        //update(int id) 
-        //call the get input for description and due date as in create method
-        // create var toDoItem = new ...
-        //call the repository update method 
-        //
-
 
         public void Update(int id)
         {
