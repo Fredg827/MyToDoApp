@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ToDoApp.DataAccess.Models;
-
+using ToDoApp.Domain;
 
 namespace ToDoApp.DataAccess
 {
     public class DictionaryTodoRepository : ITodoRepository
     {
-        private static Dictionary<int, ToDoItem> _toDoItems = new Dictionary<int, ToDoItem>() 
+        private static Dictionary<int, ToDoItem> _toDoItems = new Dictionary<int, ToDoItem>()
         {
             {1, new ToDoItem() {Id = 1, Description = "finish the app"} },
             {2, new ToDoItem() {Id = 2, Description = "vjndovnsovmsdv" , DueDate = new DateTime(2022, 10, 20)} },

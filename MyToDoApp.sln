@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDoApp.DataAccess", "ToDoApp.DataAccess\ToDoApp.DataAccess.csproj", "{D8E38F89-637B-48CF-AAF1-6AC8FB089795}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDoApp.DataAccess", "ToDoApp.DataAccess\ToDoApp.DataAccess.csproj", "{D8E38F89-637B-48CF-AAF1-6AC8FB089795}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDoApp.Presentation", "ToDoApp.Presentation\ToDoApp.Presentation.csproj", "{38239991-1588-4B29-81D8-559A62700ED1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDoApp.Presentation", "ToDoApp.Presentation\ToDoApp.Presentation.csproj", "{38239991-1588-4B29-81D8-559A62700ED1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.Application", "Todo.Application\Todo.Application.csproj", "{8D73963F-DB06-4D1E-BF2D-5CBED993A0E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDoApp.Domain", "ToDoApp.Domain\ToDoApp.Domain.csproj", "{AEC7F828-15C7-4291-B97D-84286D6BB986}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{38239991-1588-4B29-81D8-559A62700ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38239991-1588-4B29-81D8-559A62700ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38239991-1588-4B29-81D8-559A62700ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D73963F-DB06-4D1E-BF2D-5CBED993A0E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D73963F-DB06-4D1E-BF2D-5CBED993A0E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D73963F-DB06-4D1E-BF2D-5CBED993A0E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D73963F-DB06-4D1E-BF2D-5CBED993A0E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEC7F828-15C7-4291-B97D-84286D6BB986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEC7F828-15C7-4291-B97D-84286D6BB986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEC7F828-15C7-4291-B97D-84286D6BB986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEC7F828-15C7-4291-B97D-84286D6BB986}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

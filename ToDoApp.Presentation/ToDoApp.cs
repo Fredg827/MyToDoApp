@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using ToDoApp.DataAccess;
-using ToDoApp.DataAccess.Models;
+using ToDoApp.Domain;
 using ToDoApp.Presentation;
 
 namespace MyToDoApp.Presentation
@@ -25,12 +25,7 @@ namespace MyToDoApp.Presentation
         {
             Console.Clear();
             MenuStringTemplate(" Menu ");
-            //Console.WriteLine("\n List All - l");
-            //Console.WriteLine("\n Create - c");
-            //MenuDivider();
-            //Console.WriteLine("Please select an option from above or press [x] to exit");
-            //MenuDivider();
-            //MainMenuOptions();
+
             var menuItems = new List<ConsoleMenuItem>
             {
                 new ConsoleMenuItem("List all", ListAll),
@@ -41,27 +36,7 @@ namespace MyToDoApp.Presentation
             menu.Display();
         }
 
-        private void MainMenuOptions()
-        {
-            var list = new List<string>()
-            {
-                "l", "c", "x"
-            };
-            var input = GetOption(list);
-            switch (input.ToLower())
-            {
-                case "l":
-                    ListAll();
-                    break;
-                case "c":
-                    Create();
-                    break;
-                case "x":
-                    Exit();
-                    break;
-            }
-        }
-        public void MenuStringTemplate(string MenuTitle)
+        private void MenuStringTemplate(string MenuTitle)
 
         {
             int length = MenuTitle.Length;
@@ -71,13 +46,13 @@ namespace MyToDoApp.Presentation
             Console.WriteLine(titleString + MenuTitle + titleString);
         }
 
-        public void MenuDivider()
+        private void MenuDivider()
         {
             string divider = new string('=', 80);
             Console.WriteLine(divider);
         }
 
-        public string GetOption(List<string> list)
+        private string GetOption(List<string> list)
         {
 
             var input = Console.ReadLine();
@@ -90,23 +65,20 @@ namespace MyToDoApp.Presentation
             return input;
         }
 
-        public void Create()
+        private void Create()
         {
             Console.Clear();
             MenuStringTemplate(" Create ");
-            Console.WriteLine("Please enter description:");
 
-
-            var itemDescription = GetInput<string>("description");
-            var dueDate = GetInput<DateTime?>("DueDate");
+            var itemDescription = GetInput<string>("description", d => !string.IsNullOrEmpty(d), "Description cannot be empty");
+            var dueDate = GetInput<DateTime?>("DueDate", duedate => duedate >= DateTime.Now, "Due date cannot be in the past");
 
             _todoRepository.Create(itemDescription, dueDate);
-
 
             DisplayMainMenu();
         }
 
-        public void ListAll()
+        private void ListAll()
         {
             Console.Clear();
             MenuStringTemplate(" List All ");
@@ -121,13 +93,9 @@ namespace MyToDoApp.Presentation
                 var row = $"{toDoItem.Id} {toDoItem.Description} {formatedDate} {formatedIsCompleted}";
 
                 Console.WriteLine(row);
-
             }
 
-            Console.WriteLine("View Item - v");
-            Console.WriteLine("Main Menu - m");
-            Console.WriteLine("Please select an option from above or press [x] to exit.");
-            GetSecondMenuOptions();
+            ShowIndexMenuOptions();
         }
 
         public void ViewItem()
@@ -137,12 +105,7 @@ namespace MyToDoApp.Presentation
             Console.WriteLine("Please enter the id of the item you wish to view:");
 
             var toDoItem = GetById();
-            Console.WriteLine($"To do item selected: {toDoItem.Description}");
-            Console.WriteLine("Edit Item - e");
-            Console.WriteLine("Delete Item - d");
-            Console.WriteLine("Main Menu - m");
-            Console.WriteLine("Please select an option from above or press [x] to exit.");
-            GetViewMenuOptions(toDoItem.Id);
+            ShowViewMenuOptions(toDoItem.Id);
         }
 
         private ToDoItem GetById()
@@ -172,7 +135,7 @@ namespace MyToDoApp.Presentation
             DisplayMainMenu();
         }
 
-        public void Update(int id)
+        public void Edit(int id)
         {
             var itemDescription = GetInput<string>("description");
             var dueDate = GetInput<DateTime?>("DueDate");
@@ -191,56 +154,32 @@ namespace MyToDoApp.Presentation
 
         }
 
-        public void GetSecondMenuOptions()
+        public void ShowIndexMenuOptions()
         {
-            var list = new List<string>()
+            var menuItems = new List<ConsoleMenuItem>
             {
-                "v", "m", "x"
+                new ConsoleMenuItem("View Item", ViewItem),
+                new ConsoleMenuItem("Display Main Menu", DisplayMainMenu),
+                new ConsoleMenuItem("Exit", Exit, "X")
             };
-
-            var input = GetOption(list);
-
-            switch (input.ToLower())
-            {
-                case "v":
-                    ViewItem();
-                    break;
-                case "m":
-                    DisplayMainMenu();
-                    break;
-                case "x":
-                    Exit();
-                    break;
-            }
+            var menu = new ConsoleMenu(menuItems);
+            menu.Display();
         }
 
-        public void GetViewMenuOptions(int id)
+        public void ShowViewMenuOptions(int id)
         {
-            var list = new List<string>()
+            var menuItems = new List<ConsoleMenuItem>
             {
-                "e", "d", "m", "x"
+                new ConsoleMenuItem("Update", () => Edit(id)),
+                new ConsoleMenuItem("Delete", () => Delete(id)),
+                new ConsoleMenuItem("Display Main Menu", DisplayMainMenu),
+                new ConsoleMenuItem("Exit", Exit, "X")
             };
-
-            var input = GetOption(list);
-
-            switch (input.ToLower())
-            {
-                case "e":
-                    Update(id);
-                    break;
-                case "d":
-                    Delete(id);
-                    break;
-                case "m":
-                    DisplayMainMenu();
-                    break;
-                case "x":
-                    Exit();
-                    break;
-            }
+            var menu = new ConsoleMenu(menuItems);
+            menu.Display();
         }
 
-        private T GetInput<T>(string property)
+        private T GetInput<T>(string property, Func<T, bool> validateFunc = null, string validationMessage = null)
         {
             var isValid = false;
             T result = default;
@@ -270,6 +209,16 @@ namespace MyToDoApp.Presentation
                     Console.WriteLine($"Input is not valid, expected a {GetTypeName(result)}");
                 }
 
+                if (validateFunc != null && validateFunc.Invoke(result) == false)
+                {
+                    if (string.IsNullOrEmpty(validationMessage))
+                    {
+                        validationMessage = "Could not validate";
+                    }
+                    Console.WriteLine(validationMessage);
+
+                    isValid = false;
+                }
             }
 
             return result;

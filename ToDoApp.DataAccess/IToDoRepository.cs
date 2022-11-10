@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ToDoApp.DataAccess.Models;
+using ToDoApp.Domain;
 
 namespace ToDoApp.DataAccess
 {

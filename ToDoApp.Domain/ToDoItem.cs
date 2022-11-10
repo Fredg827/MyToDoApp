@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ToDoApp.DataAccess.Models
+﻿namespace ToDoApp.Domain
 {
     public class ToDoItem
     {
