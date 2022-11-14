@@ -1,13 +1,13 @@
 ﻿using System.Globalization;
-using ToDoApp.DataAccess;
+using Todo.Application;
 using ToDoApp.Domain;
 using ToDoApp.Presentation;
 
 namespace MyToDoApp.Presentation
 {
+
     public class ToDoApp
     {
-
         private readonly ITodoRepository _todoRepository;
 
         public ToDoApp(ITodoRepository todoRepository)
@@ -46,24 +46,24 @@ namespace MyToDoApp.Presentation
             Console.WriteLine(titleString + MenuTitle + titleString);
         }
 
-        private void MenuDivider()
-        {
-            string divider = new string('=', 80);
-            Console.WriteLine(divider);
-        }
+        //private void MenuDivider()
+        //{
+        //    string divider = new string('=', 80);
+        //    Console.WriteLine(divider);
+        //}
 
-        private string GetOption(List<string> list)
-        {
+        //private string GetOption(List<string> list)
+        //{
 
-            var input = Console.ReadLine();
-            while (string.IsNullOrEmpty(input) || (!list.Contains(input)))
+        //    var input = Console.ReadLine();
+        //    while (string.IsNullOrEmpty(input) || (!list.Contains(input)))
 
-            {
-                Console.WriteLine("Input was not Valid - Please select an option from above or press [x] to exit");
-                input = Console.ReadLine();
-            }
-            return input;
-        }
+        //    {
+        //        Console.WriteLine("Input was not Valid - Please select an option from above or press [x] to exit");
+        //        input = Console.ReadLine();
+        //    }
+        //    return input;
+        //}
 
         private void Create()
         {
@@ -73,7 +73,13 @@ namespace MyToDoApp.Presentation
             var itemDescription = GetInput<string>("description", d => !string.IsNullOrEmpty(d), "Description cannot be empty");
             var dueDate = GetInput<DateTime?>("DueDate", duedate => duedate >= DateTime.Now, "Due date cannot be in the past");
 
-            _todoRepository.Create(itemDescription, dueDate);
+            var toDoItem = new ToDoItem
+            {
+                Description = itemDescription,
+                DueDate = dueDate
+            };
+
+            _todoRepository.Create(toDoItem);
 
             DisplayMainMenu();
         }
@@ -144,9 +150,10 @@ namespace MyToDoApp.Presentation
             {
                 Description = itemDescription,
                 DueDate = dueDate,
+                Id = id
             };
 
-            var isUpdated = _todoRepository.Update(id, toDoItem);
+            var isUpdated = _todoRepository.Update(toDoItem);
             if (!isUpdated)
                 Console.WriteLine("Could not update");
 

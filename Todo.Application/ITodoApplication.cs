@@ -10,7 +10,6 @@ namespace Todo.Application
         ToDoItem GetById(int id);
         Result Create(CreateToDoItemCommand createToDoItem);
         Result Update(UpdateToDoItemCommand updateToDoItem);
-
-        Result Delete(DeleteToDoItemCommand deleteToDoItem);
+        Result Delete(int id);
     }
 }

@@ -5,10 +5,24 @@ namespace Todo.Application
 {
     public class Result
     {
-        public bool Success => Errors.Any();
+        private List<string> _errors = new List<string>();
 
-        List<string> Errors { get; set; } = new List<string>();
+        public bool Success => !_errors.Any();
 
-        public int? ItemId { get; set; }
+        public int? ItemId { get; }
+
+        public Result()
+        {
+
+        }
+        public Result(int? itemId)
+        {
+           ItemId = itemId;
+        }
+
+        public void AddError(string errorMessage)
+        {
+            _errors.Add(errorMessage);
+        }
     }
 }

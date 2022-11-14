@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Todo.Application;
 using ToDoApp.Domain;
 
 namespace ToDoApp.DataAccess
@@ -14,20 +15,21 @@ namespace ToDoApp.DataAccess
         };
         private static int _lastId = 2;
 
-        public ToDoItem Create(string description, DateTime? dueDate)
+
+        public int? Create(ToDoItem item)
         {
             var newId = ++_lastId;
 
             var toDoItem = new ToDoItem
             {
                 Id = newId,
-                Description = description,
-                DueDate = dueDate,
+                Description = item.Description,
+                DueDate = item.DueDate,
             };
 
             _toDoItems.Add(newId, toDoItem);
 
-            return toDoItem;
+            return newId;
         }
 
         public bool Delete(int id)
@@ -55,9 +57,9 @@ namespace ToDoApp.DataAccess
             return null;
         }
 
-        public bool Update(int id, ToDoItem item)
+        public bool Update(ToDoItem item)
         {
-            var itemToUpdate = GetById(id);
+            var itemToUpdate = GetById(item.Id);
 
             if (itemToUpdate is null)
             {
