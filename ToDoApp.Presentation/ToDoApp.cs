@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Todo.Application;
+using Todo.Application.Commands;
 using ToDoApp.Domain;
 using ToDoApp.Presentation;
 
@@ -8,11 +9,11 @@ namespace MyToDoApp.Presentation
 
     public class ToDoApp
     {
-        private readonly ITodoRepository _todoRepository;
+        private readonly ITodoApplication _app;
 
-        public ToDoApp(ITodoRepository todoRepository)
+        public ToDoApp(ITodoApplication app)
         {
-            _todoRepository = todoRepository;
+            _app = app;
         }
 
         public void Start()
@@ -73,13 +74,13 @@ namespace MyToDoApp.Presentation
             var itemDescription = GetInput<string>("description", d => !string.IsNullOrEmpty(d), "Description cannot be empty");
             var dueDate = GetInput<DateTime?>("DueDate", duedate => duedate >= DateTime.Now, "Due date cannot be in the past");
 
-            var toDoItem = new ToDoItem
+            var createToDoItem = new CreateToDoItemCommand
             {
                 Description = itemDescription,
                 DueDate = dueDate
             };
 
-            _todoRepository.Create(toDoItem);
+            _app.Create(createToDoItem);
 
             DisplayMainMenu();
         }
@@ -90,7 +91,7 @@ namespace MyToDoApp.Presentation
             MenuStringTemplate(" List All ");
             Console.WriteLine("| ID | Description | Complete By | Completed |");
 
-            foreach (var toDoItem in _todoRepository.GetAll())
+            foreach (var toDoItem in _app.GetAll())
             {
                 var formatedDate = toDoItem.DueDate.HasValue ? toDoItem.DueDate.Value.ToString("dd/MM/yyyy") : "-";
 
@@ -111,7 +112,8 @@ namespace MyToDoApp.Presentation
             Console.WriteLine("Please enter the id of the item you wish to view:");
 
             var toDoItem = GetById();
-            ShowViewMenuOptions(toDoItem.Id);
+            Console.WriteLine($"You have selected: {toDoItem.Description}");
+            ShowViewMenuOptions(toDoItem);
         }
 
         private ToDoItem GetById()
@@ -120,7 +122,7 @@ namespace MyToDoApp.Presentation
             {
                 var id = GetInput<int>("itemId");
 
-                var toDoItem = _todoRepository.GetById(id);
+                var toDoItem = _app.GetById(id);
 
                 if (toDoItem is not null)
                     return toDoItem;
@@ -133,10 +135,15 @@ namespace MyToDoApp.Presentation
 
         public void Delete(int id)
         {
-            var isDeleted = _todoRepository.Delete(id);
+            var deleteResult = _app.Delete(id);
 
-            if (!isDeleted)
-                Console.WriteLine("Could not remove");
+            if (!deleteResult.Success)
+            {
+                foreach (var error in deleteResult.GetErrors())
+                {
+                    Console.WriteLine(error);
+                }
+            }
 
             DisplayMainMenu();
         }
@@ -146,19 +153,42 @@ namespace MyToDoApp.Presentation
             var itemDescription = GetInput<string>("description");
             var dueDate = GetInput<DateTime?>("DueDate");
 
-            var toDoItem = new ToDoItem
+            var updateToDoItemCommand = new UpdateToDoItemCommand
             {
                 Description = itemDescription,
                 DueDate = dueDate,
                 Id = id
             };
 
-            var isUpdated = _todoRepository.Update(toDoItem);
-            if (!isUpdated)
-                Console.WriteLine("Could not update");
 
+
+            var updateResult = _app.Update(updateToDoItemCommand);
+            if (!updateResult.Success)
+                foreach (var error in updateResult.GetErrors())
+                {
+                    Console.WriteLine(error);
+                }
             DisplayMainMenu();
 
+        }
+
+        public void MarkAsCompleted(ToDoItem toDoItem)
+        {
+            var updateToDoItemCommand = new UpdateToDoItemCommand
+            {
+                Id = toDoItem.Id,   
+                DueDate = toDoItem.DueDate,
+                Description = toDoItem.Description,
+                IsCompleted = true
+            };
+
+            var updateIsCompleted = _app.Update(updateToDoItemCommand);
+            if (!updateIsCompleted.Success)
+                foreach (var error in updateIsCompleted.GetErrors())
+                {
+                    Console.WriteLine(error);
+                }
+            DisplayMainMenu();
         }
 
         public void ShowIndexMenuOptions()
@@ -173,12 +203,13 @@ namespace MyToDoApp.Presentation
             menu.Display();
         }
 
-        public void ShowViewMenuOptions(int id)
+        public void ShowViewMenuOptions(ToDoItem toDoItem)
         {
             var menuItems = new List<ConsoleMenuItem>
             {
-                new ConsoleMenuItem("Update", () => Edit(id)),
-                new ConsoleMenuItem("Delete", () => Delete(id)),
+                new ConsoleMenuItem("Update", () => Edit(toDoItem.Id)),
+                new ConsoleMenuItem("Mark as Completed", () => MarkAsCompleted(toDoItem)),
+                new ConsoleMenuItem("Delete", () => Delete(toDoItem.Id)),
                 new ConsoleMenuItem("Display Main Menu", DisplayMainMenu),
                 new ConsoleMenuItem("Exit", Exit, "X")
             };

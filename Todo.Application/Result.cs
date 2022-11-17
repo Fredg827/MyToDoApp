@@ -17,12 +17,14 @@ namespace Todo.Application
         }
         public Result(int? itemId)
         {
-           ItemId = itemId;
+            ItemId = itemId;
         }
 
         public void AddError(string errorMessage)
         {
             _errors.Add(errorMessage);
         }
+
+        public List<string> GetErrors() => _errors.ToList();
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Todo.Application.Commands;
 using ToDoApp.Domain;
 
@@ -38,7 +37,7 @@ namespace Todo.Application
             //if id is not null => new Result(id)
             if (newId is not null)
             {
-               return new Result(newId);
+                return new Result(newId);
             }
             // else, add error - could not create item 
             result.AddError("Could not save item");
@@ -50,7 +49,7 @@ namespace Todo.Application
             var result = new Result(id);
             var toDoItem = _todoRepository.GetById(id);
 
-            if(toDoItem is null)
+            if (toDoItem is null)
             {
                 result.AddError($"Could not find item with ID {id}");
                 return result;
@@ -91,13 +90,15 @@ namespace Todo.Application
             toDoItem.DueDate = updateToDoItem.DueDate;
             toDoItem.IsCompleted = updateToDoItem.IsCompleted;
 
-           var isUpdated = _todoRepository.Update(toDoItem);
+            var isUpdated = _todoRepository.Update(toDoItem);
             if (isUpdated == false)
             {
                 result.AddError("Could not update");
             }
             return result;
         }
+
+
 
         private static Result ValidateDescription(string description, int? id = null)
         {
