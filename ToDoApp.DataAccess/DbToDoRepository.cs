@@ -67,6 +67,7 @@ namespace ToDoApp.DataAccess
             domainItem.DueDate = item.DueDate;
             domainItem.IsCompleted = item.IsCompleted;
             domainItem.ModifiedDate = DateTime.UtcNow;
+            domainItem.CompletedDate = DateTime.UtcNow;
 
             var updateCount = _context.SaveChanges();
             var updateWasSuccesful = updateCount > 0;

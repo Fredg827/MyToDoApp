@@ -47,25 +47,6 @@ namespace MyToDoApp.Presentation
             Console.WriteLine(titleString + MenuTitle + titleString);
         }
 
-        //private void MenuDivider()
-        //{
-        //    string divider = new string('=', 80);
-        //    Console.WriteLine(divider);
-        //}
-
-        //private string GetOption(List<string> list)
-        //{
-
-        //    var input = Console.ReadLine();
-        //    while (string.IsNullOrEmpty(input) || (!list.Contains(input)))
-
-        //    {
-        //        Console.WriteLine("Input was not Valid - Please select an option from above or press [x] to exit");
-        //        input = Console.ReadLine();
-        //    }
-        //    return input;
-        //}
-
         private void Create()
         {
             Console.Clear();
@@ -112,7 +93,9 @@ namespace MyToDoApp.Presentation
             Console.WriteLine("Please enter the id of the item you wish to view:");
 
             var toDoItem = GetById();
+            MenuStringTemplate("");
             Console.WriteLine($"You have selected: {toDoItem.Description}");
+            MenuStringTemplate("");
             ShowViewMenuOptions(toDoItem);
         }
 
@@ -179,7 +162,7 @@ namespace MyToDoApp.Presentation
                 Id = toDoItem.Id,   
                 DueDate = toDoItem.DueDate,
                 Description = toDoItem.Description,
-                IsCompleted = true
+                IsCompleted = true,
             };
 
             var updateIsCompleted = _app.Update(updateToDoItemCommand);
